@@ -1,0 +1,13 @@
+INFO:pyftpdlib:>>> starting FTP server on 192.168.81.95:2121, pid=4908 <<<
+INFO:pyftpdlib:concurrency model: async
+INFO:pyftpdlib:masquerade (NAT) address: None
+INFO:pyftpdlib:passive ports: 2000->2199
+INFO:pyftpdlib:192.168.81.189:54603-[] FTP session opened (connect)
+INFO:pyftpdlib:192.168.81.189:54603-[anonymous] USER 'anonymous' logged in.
+INFO:pyftpdlib:192.168.81.189:54612-[] FTP session opened (connect)
+INFO:pyftpdlib:192.168.81.189:54612-[anonymous] USER 'anonymous' logged in.
+INFO:pyftpdlib:192.168.81.189:54612-[anonymous] CWD E:\ftp\anonymous 250
+INFO:pyftpdlib:192.168.81.189:54612-[anonymous] Passive data channel timed out.
+INFO:pyftpdlib:192.168.81.189:54618-[] FTP session opened (connect)
+INFO:pyftpdlib:192.168.81.189:54618-[admin] USER 'admin' logged in.
+INFO:pyftpdlib:192.168.81.189:54612-[anonymous] FTP session closed (disconnect).

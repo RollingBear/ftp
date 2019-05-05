@@ -17,11 +17,10 @@ conf = config.config('\\config\\config.ini')
 sql = mysql.mysql()
 
 
-def get_user(userfile):
+def get_user():
     # 定义一个用户列表
 
-    user_list = sql.format_query_dict(_list_name='*', _table_name='user', _condition='')
-
+    user_list = sql.format_query_dict(_list_name='*', _table_name='user', _condition='user_id>0')
     return user_list
 
 
@@ -31,11 +30,11 @@ def ftp_server():
 
     # 添加用户权限和路径，括号内的参数是(用户名， 密码， 用户目录， 权限)
     # authorizer.add_user('user', '12345', '/home/', perm='elradfmw')
-    user_list = get_user('conf/user.py')
+    user_list = get_user()
     for user in user_list:
-        name, passwd, permit, homedir = user
+        id, username, password, auth, address = user
         try:
-            authorizer.add_user(name, passwd, homedir, perm=permit)
+            authorizer.add_user(username=username, password=password, homedir=address, perm=auth)
         except Exception as e:
             print(e)
 
@@ -45,8 +44,8 @@ def ftp_server():
 
     # 下载上传速度设置
     dtp_handler = ThrottledDTPHandler
-    dtp_handler.read_limit = conf.get('ftp').max_download
-    dtp_handler.write_limit = conf.get('ftp').max_upload
+    dtp_handler.read_limit = int(conf.get('ftp').max_download) * 1024
+    dtp_handler.write_limit = int(conf.get('ftp').max_upload) * 1024
 
     # 初始化ftp句柄
     handler = FTPHandler
@@ -54,23 +53,23 @@ def ftp_server():
 
     # 日志记录
     if conf.get('ftp').enable_logging == 'on':
-        logging.basicConfig(filename=conf.get('ftp').loging_name, level=logging.INFO)
+        logging.basicConfig(filename=conf.get('ftp').logging_name, level=logging.INFO)
 
     # 欢迎信息
     handler.banner = conf.get('ftp').welcome_msg
 
     # 添加被动端口范围
-    handler.passive_ports = range(conf.get('ftp').port_start, conf.get('ftp').port_end)
+    handler.passive_ports = range(int(conf.get('ftp').port_start), int(conf.get('ftp').port_end))
 
     # 监听ip 和 端口
-    server = FTPServer((conf.get('ftp').ip, conf.get('ftp').port), handler)
+    server = FTPServer((conf.get('ftp').ip, int(conf.get('ftp').port)), handler)
 
     # 最大连接数
-    server.max_cons = conf.get('ftp').max_connect
-    server.max_cons_per_ip = conf.get('ftp').max_per_ip
+    server.max_cons = int(conf.get('ftp').max_connect)
+    server.max_cons_per_ip = int(conf.get('ftp').max_per_id)
 
     # 开始服务
-    print('开始服务')
+    print(conf.get('ftp').welcome_msg)
     server.serve_forever()
 
 

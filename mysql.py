@@ -92,17 +92,17 @@ class mysql():
     def query_dict(self, _sql_dict):
         if 'select' in _sql_dict.keys():
             sql = 'SELECT ' + _sql_dict['select'] + ' FROM ' + _sql_dict['from'] + self.where(_sql_dict['where'])
-            print(sql)
+            # print(sql)
             return self.query(sql)
         elif 'insert' in _sql_dict.keys():
             sql = "INSERT INTO " + _sql_dict['insert'] + self.quote(_sql_dict['domain_array'],
                                                                     type_filter=False) + " VALUES " + self.quote(
                 _sql_dict['value_array'])
-            print(sql)
+            # print(sql)
             return self.query(sql)
         elif 'delete' in _sql_dict.keys():
             sql = 'DELETE FROM ' + _sql_dict['delete'] + self.where(_sql_dict['where'])
-            print(sql)
+            # print(sql)
             return self.query(sql)
 
     @staticmethod

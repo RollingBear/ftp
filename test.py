@@ -27,4 +27,4 @@ sql = mysql.mysql()
 
 listre = (sql.format_query_dict(_list_name='*', _table_name='user', _condition='user_id>0'))
 print(listre)
-print(listre[0][2])
+print(listre[3][2])
