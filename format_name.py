@@ -14,17 +14,21 @@ name = []
 
 def get_file_list(file_path):
     '''Traversing the file directory'''
-    file_list = os.listdir(file_path)
-    # Traversing the file directory
-    for file in file_list:
-        filepath = os.path.join(file_path, file)
-        # if file folder, recursive
-        if os.path.isdir(filepath):
-            get_file_list(filepath)
-        # if not file folder, save file name and path
-        elif os.path.isfile(filepath):
-            path.append(filepath)
-            name.append(file)
+    try:
+        file_list = os.listdir(file_path)
+        # Traversing the file directory
+        for file in file_list:
+            filepath = os.path.join(file_path, file)
+            # if file folder, recursive
+            if os.path.isdir(filepath):
+                get_file_list(filepath)
+            # if not file folder, save file name and path
+            elif os.path.isfile(filepath):
+                path.append(filepath)
+                name.append(file)
+    except Exception as e:
+        logging.info(traceback.format_exc())
+
     return path, name
 
 
@@ -78,18 +82,4 @@ def update_file(file_path):
 if __name__ == '__main__':
     file_path = 'E:\\ftp\\admin'
 
-    # get(file_path)
-    # print(path)
-    # print(name)
-
     update_file(file_path)
-
-    # get(file_path)
-    # print(path)
-    # print(name)
-
-    # for num in range(len(path)):
-    #     print(path[num])
-    #     print(name[num])
-    #     print("created: %s" % time.ctime(os.path.getctime(path[num])))
-    #     print()
