@@ -1,0 +1,1 @@
+start protoc -I . --python_out=. sendfile.proto

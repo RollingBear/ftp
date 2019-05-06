@@ -1,0 +1,56 @@
+syntax = "proto3";
+package trans_structure;
+
+message bksendfile {
+    string fname = 1;
+    int32 controlpeople_type=2;
+    string name = 3;
+    string idcard = 4;
+    string sex = 5;
+    int64 age = 6;
+    string fpath = 7;
+    bytes file = 8;
+    string feedbacktopic= 9;
+    int32 total= 10;
+    int32 currentid= 11;
+    int32 errornum= 12;
+}
+
+message bkfeedback {
+    string fname = 1;
+    string fpath = 2;
+    int32 isfailed = 3;
+    string reason= 4;
+    int32 total= 5;
+    int32 currentid= 6;
+    int32 bulkoknum= 7;
+    int32 bulkfailnum= 8;
+}
+
+message ptsendfile {
+    string cameraid = 1;
+    int32 importbatch=2;
+    string date=3;
+    string fname = 4;
+    string fpath = 5;
+    bytes file = 6;
+    string feedbacktopic= 7;
+    int32 total= 8;
+    int32 currentid= 9;
+}
+
+message ptfeedback {
+    string fname = 1;
+    string fpath = 2;
+    int32 total= 3;
+    int32 currentid= 4;
+    int32 oknum= 5;
+    int32 failnum= 6;
+}
+
+message sendpic {
+    string face_filename = 1;
+    bytes face = 2;
+    string back_filename= 3;
+    bytes back = 4;
+}

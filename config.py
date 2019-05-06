@@ -30,7 +30,7 @@ class OperationalError(Exception):
 
 class Dictionary(dict):
     '''
-    from "config.ini" add parameter into the dict
+    from "config.conf" add parameter into the dict
     '''
 
     def __getattr__(self, item):
@@ -41,7 +41,7 @@ class Dictionary(dict):
         :param item: the key
         :return: the value of the key
         '''
-        return self.get(item, 'not find config key name in "config.ini"')
+        return self.get(item, 'not find config key name in "config.conf"')
 
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
@@ -55,7 +55,7 @@ class config(object):
 
     def __init__(self, config_file_address):
         '''
-        get the path of config.ini
+        get the path of config.conf
         current_dir = absolute address
         top_one_dir = the superior address of the absolute address
         if ini configuration file locate the same address with this python file, use
