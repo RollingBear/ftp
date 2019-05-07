@@ -5,12 +5,25 @@
 __author__ = 'RollingBear'
 
 import os
+import sys
 import time
 import logging
+from logging.handlers import RotatingFileHandler
 import traceback
 import configparser
 from confluent_kafka import Producer
 from protobuf import sendfile_pb2
+
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s  %(threadName)s  %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+                    stream=sys.stdout)
+
+Rthandler = RotatingFileHandler('ftp_monitor_log.log', maxBytes=10 * 1024 * 1024, backupCount=10)
+Rthandler.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s  %(threadName)s  %(filename)s[line:%(lineno)d] %(levelname)s %(message)s')
+Rthandler.setFormatter(formatter)
+logger = logging.getLogger('PicCaptureFace')
+logger.addHandler(Rthandler)
 
 cf = configparser.ConfigParser()
 cf.read("config.conf", encoding="utf-8")
@@ -35,8 +48,10 @@ producer = Producer({'bootstrap.servers': servers,
                      'default.topic.config': {'acks': 'all'}})
 
 path = []
-name = []
-count_remove = 0
+
+
+# name = []
+
 
 def get_file_list(file_path):
     '''Traversing the file directory, remove file size > 50Kb'''
@@ -53,32 +68,30 @@ def get_file_list(file_path):
                 get_file_list(filepath)
             # if not file folder, save file name and path
             elif os.path.isfile(filepath):
-                if '.jpg' in file:
+                if '.jpg' not in file:
                     print(file, 'has been removed')
                     os.remove(filepath)
-                    count_remove += 1
                 elif os.path.getsize(filepath) > (file_size * 1024):
                     print(file, 'has been removed')
                     os.remove(filepath)
-                    count_remove += 1
                 else:
                     path.append(filepath)
-                    name.append(file)
+                    # name.append(file)
 
     except Exception as e:
-        logging.info(traceback.format_exc())
+        logger.error(traceback.format_exc())
 
-    return path, name
+    return path
 
 
 def get(file_path):
     '''empty list'''
     del path[:]
-    del name[:]
+    # del name[:]
     return get_file_list(file_path)
 
 
-def format_name_face(face, face_path):
+def format_name_face(face_path):
     '''rename hk face file'''
     try:
         creat_time = os.path.getctime(face_path)
@@ -89,62 +102,38 @@ def format_name_face(face, face_path):
         dirname = face_path.lstrip(file_path).split('/')[0]
 
         face_format_result = dirname + '_' + time_stamp + '_face.jpg'
-        face_path_format = face_path.replace(str(face), str(face_format_result))
+        # face_path_format = face_path.replace(str(face), str(face_format_result))
 
-        with open(face_path_format, 'rb') as f:
-            data = f.read()
+        try:
+            with open(face_path, 'rb') as f:
+                data = f.read()
 
-        msg = sendfile_pb2.sendpic()
-        msg.face_filename = face_format_result
-        msg.face = data
-        producer.produce(topic=storagerecvtopic, value=msg.SerializeToString())
-        producer.poll(1)
+            msg = sendfile_pb2.sendpic()
+            msg.face_filename = face_format_result
+            msg.face = data
+            producer.produce(topic=storagerecvtopic, value=msg.SerializeToString())
+            producer.poll(1)
+        except Exception as e:
+            logger.error(traceback.format_exc())
 
     except Exception as e:
-        logging.info(traceback.format_exc())
+        logger.error(traceback.format_exc())
 
 
-
-# def kafka_send(face, face_path):
-#     try:
-#         msg = sendfile_pb2.sendpic()
-#         msg.face_filename = face
-#         msg.face = face_path
-#         producer.produce(topic=storagerecvtopic, value=msg.SerializeToString())
-#         producer.poll(1)
-#
-#         return True
-#
-#     except Exception as e:
-#         logging.info(traceback.format_exc())
-#         return False
-
-
-def update_file():
+def start():
     '''Traversing the file directory, rename all file'''
     while True:
         get(file_path)
-        global count_remove
-        print(count_remove, 'picture removed')
-        count_remove = 0
-        for i in range(len(name)):
-            format_name_face(name[i], path[i])
-            os.remove(path[i])
-
-        # get(file_path)
-        #
-        # for i in range(len(name)):
-        #     result = kafka_send(name[i], path[i])
-        #     if result:
-        #         try:
-        #             os.remove(path[i])
-        #         except Exception as e:
-        #             logging.info(traceback.format_exc())
-        #     else:
-        #         logging.info('send to kafka failed')
+        for i in range(len(path)):
+            format_name_face(path[i])
+            try:
+                os.remove(path[i])
+            except Exception as e:
+                logger.error(traceback.format_exc())
 
         time.sleep(scan_time)
 
 
 if __name__ == '__main__':
-    update_file()
+    logger.info('Start at {}'.format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))))
+    start()
