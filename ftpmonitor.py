@@ -99,7 +99,7 @@ def format_name_face(face_path):
         data_head = time.strftime("%Y%m%d%H%M%S", time.localtime(creat_time))
         time_stamp = "%s%04d" % (data_head, data_secs)
 
-        dirname = face_path.lstrip(file_path).split('/')[0]
+        dirname = face_path.lstrip(file_path).split('/')[0].replace('-', '.')
 
         face_format_result = dirname + '_' + time_stamp + '_face.jpg'
         # face_path_format = face_path.replace(str(face), str(face_format_result))
