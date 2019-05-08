@@ -20,7 +20,7 @@ sql = mysql.mysql()
 def get_user():
     # 定义一个用户列表
 
-    user_list = sql.format_query_dict(_list_name='*', _table_name='user', _condition='user_id>0')
+    user_list = sql.format_query_dict(_list_name='*', _table_name='user', _condition=None)
     return user_list
 
 

@@ -46,3 +46,14 @@ with open('E:\\ftp\\admin\\192.168.81.13\\192.168.81.13_201905061028299686_face.
     data = f.read()
 
 print(data)
+
+get_config = config.config(_config_address)
+
+__config = {
+    'host': get_config.get('db').host,
+    'port': int(get_config.get('db').port),
+    'username': get_config.get('db').username,
+    'password': get_config.get('db').password,
+    'database': get_config.get('db').database,
+    'charset': get_config.get('db').charset
+}
